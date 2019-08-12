@@ -1,0 +1,12 @@
+
+# Build products
+target/*
+docs/_build/**
+.DS_Store
+derby.log
+metastore_db/**
+
+# IntelliJ data
+*.iml
+.idea/*
+.ipr
