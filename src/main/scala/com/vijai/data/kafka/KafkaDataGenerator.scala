@@ -7,8 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Source
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.Logger
-import com.vijai.data.commons.{CustomerList, CustomerListGenerator}
-import io.circe.Json
+import com.vijai.data.commons.CDSDataGenerator
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -37,14 +36,8 @@ object KafkaDataGenerator extends App {
     logger.info(s"Using bootstrap server, $bootstrapServers and topic $kafkaTopic")
     Source.tick(0 seconds, 5 seconds, ())
       .map(_ => {
-        val value = Random.nextInt(50) match {
-          case 2 => Json.Null.noSpaces
-          case _ => {
-            val customerList: CustomerList = CustomerListGenerator.generateRandomList(s"LOCATION_${Random.nextInt(LOCATION_COUNT)}", Random.nextInt(20))
-            logger.info(s"Producing bulk message with - ${customerList.customers.size} customers.")
-            customerList.asJson.noSpaces
-          }
-        }
+        val value = CDSDataGenerator.randomCdsMessage(Math.abs(Random.nextInt(100))).asJson.noSpaces
+        logger.info(s"Producing $value")
         new ProducerRecord[Array[Byte], String](kafkaTopic, value)
       })
       .runWith(Producer.plainSink(producerSettings))

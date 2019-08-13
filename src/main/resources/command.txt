@@ -1,0 +1,1 @@
+java -cp target/scala-2.12/kafka-data-gen-assembly-0.1.0-SNAPSHOT.jar com.vijai.data.kafka.KafkaDataGenerator
